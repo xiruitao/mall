@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.dao.CartDao">
+    <resultMap id="CartResultMap" type="com.mall.entity.Cart">
+        <id column="cart_id" jdbcType="INTEGER" property="cartId" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="item_id" jdbcType="INTEGER" property="itemId" />
+        <result column="amount" jdbcType="INTEGER" property="amount" />
+    </resultMap>
+
+    <insert id="insertSelective" parameterType="com.mall.entity.Cart" keyProperty="cartId" useGeneratedKeys="true">
+        insert into cart
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cartId != null">
+                cart_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="itemId != null">
+                item_id,
+            </if>
+            <if test="amount != null">
+                amount,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cartId != null">
+                #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="itemId != null">
+                #{itemId,jdbcType=INTEGER},
+            </if>
+            <if test="amount != null">
+                #{amount,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="deleteCart" parameterType="java.lang.Integer">
+        delete from cart
+        where cart_id = #{cartId,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteCartMore" parameterType="java.util.List">
+        delete from cart
+        where cart_id in (
+        <foreach collection="list" item="cartId" separator=",">
+            #{cartId}
+        </foreach>
+        )
+    </delete>
+
+    <delete id="deleteCartOfUser" parameterType="java.lang.Integer">
+        delete from cart
+        where user_id = #{userId,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectCart" resultMap="CartResultMap">
+        select cart_id, user_id, item_id, amount
+        from cart
+        where user_id = #{userId,jdbcType=INTEGER}
+        order by cart_id
+    </select>
+
+    <select id="selectCartById" resultMap="CartResultMap">
+        select cart_id, user_id, item_id, amount
+        from cart
+        where cart_id = #{cartId,jdbcType=INTEGER}
+    </select>
+
+    <update id="updateAmount" parameterType="com.mall.entity.Cart">
+        update cart
+        set amount = amount + #{numbers}
+        where cart_id = #{cartId,jdbcType=INTEGER}
+    </update>
+</mapper>

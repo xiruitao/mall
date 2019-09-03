@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.dao.ItemDao">
+    <resultMap id="ItemResultMap" type="com.mall.entity.Item">
+        <id column="item_id" jdbcType="INTEGER" property="itemId" />
+        <result column="item_name" jdbcType="VARCHAR" property="itemName" />
+        <result column="item_category_id" jdbcType="INTEGER" property="itemCategoryId" />
+        <result column="item_price" jdbcType="DECIMAL" property="itemPrice" />
+        <result column="item_sales" jdbcType="INTEGER" property="itemSales" />
+        <result column="item_description" jdbcType="VARCHAR" property="itemDescription" />
+        <result column="item_image_url" jdbcType="VARCHAR" property="itemImageUrl" />
+        <result column="shelves" jdbcType="TINYINT" property="shelves"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    </resultMap>
+    <select id="selectByItemId" parameterType="java.lang.Integer" resultMap="ItemResultMap">
+        select item_id, item_name, item_category_id, item_price, item_sales, item_description, item_image_url, shelves, create_time
+        from item
+        where item_id = #{itemId,jdbcType=INTEGER}
+    </select>
+
+    <select id="listItem" resultMap="ItemResultMap">
+        select item_id, item_name, item_category_id, item_price, item_sales, item_description, item_image_url, shelves, create_time
+        from item order by item_sales desc
+    </select>
+
+    <select id="listItemNew" resultMap="ItemResultMap">
+        select item_id, item_name, item_category_id, item_price, item_sales, item_description, item_image_url, shelves, create_time
+        from item
+        order by create_time desc
+        limit #{offset},#{limit}
+    </select>
+
+    <select id="listItemPage" resultMap="ItemResultMap">
+        select item_id, item_name, item_category_id, item_price, item_sales, item_description, item_image_url, shelves, create_time
+        from item
+        order by item_sales desc
+        limit #{offset},#{limit}
+    </select>
+
+    <select id="fuzzySearch" resultMap="ItemResultMap">
+        select item_id, item_name, item_category_id, item_price, item_sales, item_description, item_image_url, shelves, create_time
+        from item
+        where item_name like "%"#{field}"%" or item_description like "%"#{field}"%"
+        order by item_sales desc
+    </select>
+
+    <select id="selectItemByShelves" resultMap="ItemResultMap">
+        select item_id, item_name, item_category_id, item_price, item_sales, item_description, item_image_url, shelves, create_time
+        from item
+        where shelves = #{shelves}
+        order by item_sales desc
+    </select>
+
+    <select id="selectItemRows" resultType="java.lang.Integer">
+        select count(item_id) from item
+    </select>
+
+    <select id="selectItemByItemCategoryId" parameterType="java.lang.Integer" resultMap="ItemResultMap">
+        select item_id, item_name, item_category_id, item_price, item_sales, item_description, item_image_url, shelves, create_time
+        from item
+        where item_category_id = #{itemCategoryId,jdbcType=INTEGER}
+        order by item_sales desc
+    </select>
+
+    <insert id="insertSelective" parameterType="com.mall.entity.Item" keyProperty="itemId" useGeneratedKeys="true">
+        insert into item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="itemId != null">
+                item_id,
+            </if>
+            <if test="itemName != null">
+                item_name,
+            </if>
+            <if test="itemCategoryId != null">
+                item_category_id,
+            </if>
+            <if test="itemPrice != null">
+                item_price,
+            </if>
+            <if test="itemSales != null">
+                item_sales,
+            </if>
+            <if test="itemDescription != null">
+                item_description,
+            </if>
+            <if test="itemImageUrl != null">
+                item_image_url,
+            </if>
+            <if test="shelves != null">
+                shelves,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="itemId != null">
+                #{itemId,jdbcType=INTEGER},
+            </if>
+            <if test="itemName != null">
+                #{itemName,jdbcType=VARCHAR},
+            </if>
+            <if test="itemCategoryId != null">
+                #{itemCategoryId,jdbcType=INTEGER},
+            </if>
+            <if test="itemPrice != null">
+                #{itemPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="itemSales != null">
+                #{itemSales,jdbcType=INTEGER},
+            </if>
+            <if test="itemDescription != null">
+                #{itemDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="itemImageUrl != null">
+                #{itemImageUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="shelves != null">
+                #{shelves,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="deleteItemByItemId" parameterType="java.lang.Integer">
+        delete from item
+        where item_id = #{itemId,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteItemMore" parameterType="java.util.List">
+        delete from item
+        where item_id in(
+        <foreach collection="list" item="itemId" separator=",">
+            #{itemId}
+        </foreach>
+        )
+    </delete>
+
+    <update id="updateItemByItemId" parameterType="com.mall.entity.Item">
+        update item
+        set item_name = #{itemName,jdbcType=VARCHAR},
+        item_category_id = #{itemCategoryId,jdbcType=INTEGER},
+        item_price = #{itemPrice,jdbcType=DECIMAL},
+        item_sales = #{itemSales,jdbcType=INTEGER},
+        item_description = #{itemDescription,jdbcType=VARCHAR},
+        item_image_url = #{itemImageUrl,jdbcType=VARCHAR},
+        shelves = #{shelves,jdbcType=TINYINT}
+        where item_id = #{itemId,jdbcType=INTEGER}
+    </update>
+
+    <update id="increaseItemSales">
+        update item
+        set item_sales = item_sales + #{amount}
+        where item_id = #{itemId,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateShelves">
+        update item
+        set shelves = #{shelves,jdbcType=TINYINT}
+        where item_id = #{itemId,jdbcType=INTEGER}
+    </update>
+</mapper>

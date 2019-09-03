@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.dao.UserPasswordDao">
+    <resultMap id="UserPasswordResultMap" type="com.mall.entity.UserPassword">
+        <id column="password_id" jdbcType="INTEGER" property="passwordId"/>
+        <result column="encrpt_password" jdbcType="VARCHAR" property="encrptPassword"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+    </resultMap>
+
+    <select id="selectByPasswordId" parameterType="java.lang.Integer" resultMap="UserPasswordResultMap">
+        select password_id, encrpt_password, user_id
+        from user_password
+        where password_id = #{passwordId,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="UserPasswordResultMap">
+        select password_id, encrpt_password, user_id
+        from user_password
+        where user_id = #{passwordId,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insertSelective" parameterType="com.mall.entity.UserPassword" keyProperty="passwordId" useGeneratedKeys="true">
+        insert into user_password
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="passwordId != null">
+                password_id,
+            </if>
+            <if test="encrptPassword != null">
+                encrpt_password,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="passwordId != null">
+                #{passwordId,jdbcType=INTEGER},
+            </if>
+            <if test="encrptPassword != null">
+                #{encrptPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.mall.entity.UserPassword">
+        update user_password
+        set encrpt_password = #{encrptPassword,jdbcType=VARCHAR},
+        user_id = #{userId,jdbcType=INTEGER}
+        where password_id = #{passwordId,jdbcType=INTEGER}
+    </update>
+</mapper>
