@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.dao.AdminDao">
+    <resultMap id="AdminResultMap" type="com.mall.entity.Admin">
+        <id column="admin_id" jdbcType="INTEGER" property="adminId"/>
+        <result column="admin_name" jdbcType="VARCHAR" property="adminName"/>
+        <result column="admin_mail" jdbcType="VARCHAR" property="adminMail"/>
+        <result column="admin_password" jdbcType="VARCHAR" property="adminPassword"/>
+    </resultMap>
+    <select id="selectAdminByMail" parameterType="java.lang.String" resultMap="AdminResultMap">
+        select admin_id, admin_name, admin_mail, admin_password
+        from admin_info
+        where admin_mail = #{adminMail}
+    </select>
+
+    <insert id="insertSelective" parameterType="com.mall.entity.Admin" keyProperty="adminId" useGeneratedKeys="true">
+        insert into admin_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="adminId != null">
+                admin_id,
+            </if>
+            <if test="adminName != null">
+                admin_name,
+            </if>
+            <if test="adminMail != null">
+                admin_mail,
+            </if>
+            <if test="adminPassword != null">
+                admin_password,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="adminId != null">
+                #{adminId,jdbcType=INTEGER},
+            </if>
+            <if test="adminName != null">
+                #{adminName,jdbcType=VARCHAR},
+            </if>
+            <if test="adminMail != null">
+                #{adminMail,jdbcType=VARCHAR},
+            </if>
+            <if test="adminPassword != null">
+                #{adminPassword,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+</mapper>

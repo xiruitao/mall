@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.dao.PointsDao">
+    <resultMap id="PointsResultMap" type="com.mall.entity.Points">
+        <id column="points_id" jdbcType="INTEGER" property="pointsId" />
+        <result column="points_number" jdbcType="INTEGER" property="pointsNumber" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="user_name" jdbcType="VARCHAR" property="userName" />
+        <result column="generation_time" jdbcType="TIMESTAMP" property="generationTime" />
+        <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    </resultMap>
+
+    <select id="selectUserPointsNumber" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select sum(points_number)
+        from points
+        where user_id = #{userId}
+    </select>
+
+    <select id="selectPointsByUserId" parameterType="java.lang.Integer" resultMap="PointsResultMap">
+        select points_id, points_number, user_id, user_name, generation_time, order_id
+        from points
+        where user_id = #{userId}
+    </select>
+
+    <select id="selectByOrderId" parameterType="java.lang.String" resultMap="PointsResultMap">
+        select points_id, points_number, user_id, user_name, generation_time, order_id
+        from points
+        where order_id = #{orderId}
+    </select>
+
+    <select id="selectPointsRows" resultType="java.lang.Integer">
+        select count(points_id) from points
+    </select>
+
+    <select id="listPointsPages" resultMap="PointsResultMap">
+        select points_id, points_number, user_id, user_name, generation_time, order_id
+        from points
+        order by generation_time desc
+        limit #{offset},#{limit}
+    </select>
+
+    <select id="pointsSearch" resultMap="PointsResultMap">
+        select points_id, points_number, user_id, user_name, generation_time, order_id
+        from points
+        where user_id like "%"#{field}"%" or user_name like "%"#{field}"%"
+        order by generation_time desc
+    </select>
+
+    <insert id="insertSelective" parameterType="com.mall.entity.Points" keyProperty="pointsId" useGeneratedKeys="true">
+        insert into points
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pointsId != null">
+                points_id,
+            </if>
+            <if test="pointsNumber != null">
+                points_number,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="generationTime != null">
+                generation_time,
+            </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pointsId != null">
+                #{pointsId,jdbcType=INTEGER},
+            </if>
+            <if test="pointsNumber != null">
+                #{pointsNumber,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="generationTime != null">
+                #{generationTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="orderId != null">
+                #{orderId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.mall.entity.Points">
+        update points
+        set points_number = #{pointsNumber,jdbcType=INTEGER},
+        user_id = #{userId,jdbcType=INTEGER},
+        user_name = #{userName,jdbcType=VARCHAR},
+        generation_time = #{generationTime,jdbcType=TIMESTAMP},
+        order_id = #{orderId,jdbcType=VARCHAR}
+        where points_id = #{pointsId,jdbcType=INTEGER}
+    </update>
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.dao.GlobalLogDao">
+    <resultMap id="GlobalLogResultMap" type="com.mall.entity.GlobalLog">
+        <id column="log_id" jdbcType="INTEGER" property="logId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_work" jdbcType="VARCHAR" property="userWork"/>
+        <result column="record_time" jdbcType="TIMESTAMP" property="recordTime"/>
+        <result column="result" jdbcType="VARCHAR" property="result"/>
+        <result column="mark" jdbcType="VARCHAR" property="mark"/>
+    </resultMap>
+
+    <select id="listLog" resultMap="GlobalLogResultMap">
+        select log_id, user_id, user_name, user_work, record_time, result, mark
+        from global_log
+        order by record_time desc
+        limit #{offset},#{limit}
+    </select>
+
+    <select id="selectLogRows" resultType="java.lang.Integer">
+        select count(log_id) from global_log
+    </select>
+
+    <select id="searchLog" resultMap="GlobalLogResultMap">
+        select log_id, user_id, user_name, user_work, record_time, result, mark
+        from global_log
+        where log_id like "%"#{field}"%" or user_id like "%"#{field}"%" or user_name like "%"#{field}"%" or user_work like "%"#{field}"%" or result like "%"#{field}"%"
+        order by record_time desc
+    </select>
+
+    <insert id="insertSelective" parameterType="com.mall.entity.GlobalLog" keyProperty="logId" useGeneratedKeys="true">
+        insert into global_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="logId != null">
+                log_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="userWork != null">
+                user_work,
+            </if>
+            <if test="recordTime != null">
+                record_time,
+            </if>
+            <if test="result != null">
+                result,
+            </if>
+            <if test="mark != null">
+                mark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="logId != null">
+                #{logId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userWork != null">
+                #{userWork,jdbcType=VARCHAR},
+            </if>
+            <if test="recordTime != null">
+                #{recordTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="result != null">
+                #{result,jdbcType=VARCHAR},
+            </if>
+            <if test="mark != null">
+                #{mark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.dao.PromoItemDao">
+    <resultMap id="PromoItemResultMap" type="com.mall.entity.PromoItem">
+        <id column="promo_item_id" jdbcType="INTEGER" property="promoItemId"/>
+        <result column="promo_item_price" jdbcType="DECIMAL" property="promoItemPrice"/>
+        <result column="promo_id" jdbcType="INTEGER" property="promoId"/>
+    </resultMap>
+
+    <select id="selectPromoItem" parameterType="java.lang.Integer" resultMap="PromoItemResultMap">
+        select promo_item_id, promo_item_price, promo_id
+        from promo_item
+        where promo_id = #{promoId}
+        order by promo_item_id
+    </select>
+
+    <select id="selectPromoItemById" parameterType="java.lang.Integer" resultMap="PromoItemResultMap">
+        select promo_item_id, promo_item_price, promo_id
+        from promo_item
+        where promo_item_id = #{promoItemId}
+    </select>
+
+    <delete id="deletePromoItem" parameterType="java.lang.Integer">
+        delete from promo_item
+        where promo_item_id = #{promoItemId}
+    </delete>
+
+    <delete id="deletePromoItemAll" parameterType="java.lang.Integer">
+        delete from promo_item
+        where promo_id = #{promoId}
+    </delete>
+
+    <update id="updatePromoItem" parameterType="com.mall.entity.PromoItem">
+        update promo_item
+        set promo_item_price = #{promoItemPrice},
+        promo_id = #{promoId}
+        where promo_item_id = #{promoItemId}
+    </update>
+
+    <insert id="insertSelective" parameterType="com.mall.entity.PromoItem" keyProperty="promoItemId" useGeneratedKeys="true">
+        insert into promo_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="promoItemId">
+                promo_item_id,
+            </if>
+            <if test="promoItemPrice">
+                promo_item_price,
+            </if>
+            <if test="promoId">
+                promo_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="promoItemId">
+                #{promoItemId},
+            </if>
+            <if test="promoItemPrice">
+                #{promoItemPrice},
+            </if>
+            <if test="promoId">
+                #{promoId},
+            </if>
+        </trim>
+    </insert>
+</mapper>

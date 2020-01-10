@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.dao.AddressDao">
+    <resultMap id="AddressResultMap" type="com.mall.entity.Address">
+        <id column="address_id" jdbcType="INTEGER" property="addressId" />
+        <result column="recipient_name" jdbcType="VARCHAR" property="recipientName" />
+        <result column="recipient_phone" jdbcType="BIGINT" property="recipientPhone" />
+        <result column="address_detail" jdbcType="VARCHAR" property="addressDetail" />
+        <result column="default_address" jdbcType="TINYINT" property="defaultAddress" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+    </resultMap>
+
+    <select id="selectByAddressId" parameterType="java.lang.Integer" resultMap="AddressResultMap">
+        select address_id, recipient_name, recipient_phone, address_detail, default_address,
+    user_id
+        from address
+        where address_id = #{addressId,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="AddressResultMap">
+        select address_id, recipient_name, recipient_phone, address_detail, default_address,
+    user_id
+        from address
+        where user_id = #{userId,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insertSelective" parameterType="com.mall.entity.Address" keyProperty="addressId" useGeneratedKeys="true">
+        insert into address
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="addressId != null">
+                address_id,
+            </if>
+            <if test="recipientName != null">
+                recipient_name,
+            </if>
+            <if test="recipientPhone != null">
+                recipient_phone,
+            </if>
+            <if test="addressDetail != null">
+                address_detail,
+            </if>
+            <if test="defaultAddress != null">
+                default_address,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="addressId != null">
+                #{addressId,jdbcType=INTEGER},
+            </if>
+            <if test="recipientName != null">
+                #{recipientName,jdbcType=VARCHAR},
+            </if>
+            <if test="recipientPhone != null">
+                #{recipientPhone,jdbcType=BIGINT},
+            </if>
+            <if test="addressDetail != null">
+                #{addressDetail,jdbcType=VARCHAR},
+            </if>
+            <if test="defaultAddress != null">
+                #{defaultAddress,jdbcType=TINYINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByAddressId" parameterType="com.mall.entity.Address">
+        update address
+        set recipient_name = #{recipientName,jdbcType=VARCHAR},
+        recipient_phone = #{recipientPhone,jdbcType=BIGINT},
+        address_detail = #{addressDetail,jdbcType=VARCHAR},
+        default_address = #{defaultAddress,jdbcType=TINYINT},
+        user_id = #{userId,jdbcType=INTEGER}
+        where address_id = #{addressId,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateDefaultAddress">
+        update address
+        set default_address = 0
+        where user_id = #{userId,jdbcType=INTEGER} and address_id <![CDATA[<>]]> #{addressId,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteByAddressId" parameterType="java.lang.Integer">
+        delete from address
+        where address_id = #{addressId,jdbcType=INTEGER}
+    </delete>
+</mapper>

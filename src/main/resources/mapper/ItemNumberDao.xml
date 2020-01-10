@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.dao.ItemNumberDao">
+    <resultMap id="ItemNumberResultMap" type="com.mall.entity.ItemNumber">
+        <id column="item_number_id" jdbcType="INTEGER" property="itemNumberId" />
+        <result column="item_number" jdbcType="INTEGER" property="itemNumber" />
+        <result column="item_id" jdbcType="INTEGER" property="itemId" />
+    </resultMap>
+    <select id="selectByItemId" parameterType="java.lang.Integer" resultMap="ItemNumberResultMap">
+        select item_number_id, item_number, item_id
+        from item_number
+        where item_id = #{itemId,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insertSelective" parameterType="com.mall.entity.ItemNumber" keyProperty="itemNumberId" useGeneratedKeys="true">
+        insert into item_number
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="itemNumberId != null">
+                item_number_id,
+            </if>
+            <if test="itemNumber != null">
+                item_number,
+            </if>
+            <if test="itemId != null">
+                item_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="itemNumberId != null">
+                #{itemNumberId,jdbcType=INTEGER},
+            </if>
+            <if test="itemNumber != null">
+                #{itemNumber,jdbcType=INTEGER},
+            </if>
+            <if test="itemId != null">
+                #{itemId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateItemNumber" parameterType="com.mall.entity.ItemNumber">
+        update item_number
+        set item_number = #{itemNumber,jdbcType=INTEGER},
+        item_id = #{itemId,jdbcType=INTEGER}
+        where item_number_id = #{itemNumberId,jdbcType=INTEGER}
+    </update>
+
+    <update id="decreaseItemNumber">
+        update item_number
+        set item_number = item_number - #{amount},
+        item_id = #{itemId,jdbcType=INTEGER}
+        where item_id = #{itemId} and item_number>=#{amount}
+    </update>
+</mapper>

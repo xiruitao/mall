@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.dao.PromoDao">
+    <resultMap id="PromoResultMap" type="com.mall.entity.Promo">
+        <id column="promo_id" jdbcType="INTEGER" property="promoId"/>
+        <result column="promo_name" jdbcType="VARCHAR" property="promoName"/>
+        <result column="promo_img_url" jdbcType="VARCHAR" property="promoImgUrl"/>
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <select id="selectPromo" parameterType="java.lang.Integer" resultMap="PromoResultMap">
+        select promo_id, promo_name, promo_img_url, start_time, end_time, create_time
+        from promo
+        where promo_id = #{promoId}
+    </select>
+
+    <select id="listPromo" resultMap="PromoResultMap">
+        select promo_id, promo_name, promo_img_url, start_time, end_time, create_time
+        from promo
+        order by promo_id
+    </select>
+
+    <delete id="deletePromo" parameterType="java.lang.Integer">
+        delete from promo
+        where promo_id = #{promoId}
+    </delete>
+
+    <update id="updatePromo" parameterType="com.mall.entity.Promo">
+        update promo
+        set promo_name = #{promoName},
+        promo_img_url = #{promoImgUrl},
+        start_time = #{startTime},
+        end_time = #{endTime}
+        where promo_id = #{promoId}
+    </update>
+
+    <insert id="insertSelective" parameterType="com.mall.entity.Promo" keyProperty="promoId" useGeneratedKeys="true">
+        insert into promo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="promoId != null">
+                promo_id,
+            </if>
+            <if test="promoName != null">
+                promo_name,
+            </if>
+            <if test="promoImgUrl != null">
+                promo_img_url,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="promoId != null">
+                #{promoId},
+            </if>
+            <if test="promoName != null">
+                #{promoName},
+            </if>
+            <if test="promoImgUrl != null">
+                #{promoImgUrl},
+            </if>
+            <if test="startTime != null">
+                #{startTime},
+            </if>
+            <if test="endTime != null">
+                #{endTime},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+        </trim>
+    </insert>
+</mapper>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.dao.PointsMemberDao">
+    <resultMap id="PointsMemberResultMap" type="com.mall.entity.PointsMember">
+        <id column="points_member_id" jdbcType="INTEGER" property="pointsMemberId"/>
+        <result column="member_level" jdbcType="INTEGER" property="memberLevel"/>
+        <result column="points_numbers" jdbcType="INTEGER" property="pointsNumbers"/>
+    </resultMap>
+
+    <select id="listPointsMember" resultMap="PointsMemberResultMap">
+        select points_member_id, member_level, points_numbers
+        from  points_member
+        order by member_level
+    </select>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="PointsMemberResultMap">
+        select points_member_id, member_level, points_numbers
+        from  points_member
+        where points_member_id = #{pointsMemberId}
+    </select>
+
+    <insert id="insertSelective" parameterType="com.mall.entity.PointsMember" keyProperty="pointsMemberId" useGeneratedKeys="true">
+        insert into points_member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pointsMemberId != null">
+                points_member_id,
+            </if>
+            <if test="memberLevel != null">
+                member_level,
+            </if>
+            <if test="pointsNumbers != null">
+                points_numbers,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pointsMemberId != null">
+                #{pointsMemberId,jdbcType=INTEGER},
+            </if>
+            <if test="memberLevel != null">
+                #{memberLevel,jdbcType=INTEGER},
+            </if>
+            <if test="pointsNumbers != null">
+                #{pointsNumbers,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updatePointsMember" parameterType="com.mall.entity.PointsMember">
+        update points_member
+        set member_level = #{memberLevel,jdbcType=INTEGER},
+        points_numbers = #{pointsNumbers,jdbcType=INTEGER}
+        where points_member_id = #{pointsMemberId,jdbcType=INTEGER}
+    </update>
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.dao.SequenceDao">
+    <resultMap id="SequenceResultMap" type="com.mall.entity.Sequence">
+        <id column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="current_value" jdbcType="INTEGER" property="currentValue"/>
+        <result column="step" jdbcType="INTEGER" property="step"/>
+        <result column="init_value" jdbcType="INTEGER" property="initValue"/>
+        <result column="max_value" jdbcType="INTEGER" property="maxValue"/>
+    </resultMap>
+
+<!-- 每次操作上锁，因为每次操作之后就是对sequence的更新-->
+    <select id="getSequenceByName" parameterType="java.lang.String" resultMap="SequenceResultMap">
+        select name, current_value, step, init_value, max_value
+        from sequence_info
+        where name = #{name,jdbcType=VARCHAR} for update 
+    </select>
+
+    <update id="updateByName" parameterType="com.mall.entity.Sequence">
+        update sequence_info
+        set current_value = #{currentValue,jdbcType=INTEGER},
+        step = #{step,jdbcType=INTEGER},
+        init_value = #{initValue,jdbcType=INTEGER},
+        max_value = #{maxValue,jdbcType=INTEGER}
+        where name = #{name,jdbcType=VARCHAR}
+    </update>
+</mapper>
